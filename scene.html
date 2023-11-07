@@ -1,0 +1,100 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+    <title>My Scene</title>
+
+    <script id="vertex-shader" type="x-shader/x-vertex">
+        attribute vec3 vPosition;
+        attribute vec3 vNormal;
+        attribute vec2 vTexCoord;
+
+        varying vec3 N, L, E;
+        varying vec2 fTexCoord;
+
+        uniform mat4 modelView;
+        uniform mat4 projection;
+
+        uniform vec4 lightPosition;
+
+        void main()
+        {
+            vec3 pos = (modelView * vec4(vPosition, 1.0)).xyz;
+
+            if (lightPosition.w == 0.0) {
+                L = normalize(lightPosition.xyz);
+            } else {
+                L = normalize( lightPosition.xyz - pos );
+            } 
+
+            E =  -normalize(pos);
+            N = normalize((modelView * vec4(vNormal, 0.0)).xyz);
+            fTexCoord = vTexCoord;
+
+            gl_Position = projection * modelView * vec4(vPosition, 1.0);
+        }
+    </script>
+
+    <script id="fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+        vec4 uColor;
+        uniform vec4 ambientProduct;
+        uniform vec4 diffuseProduct;
+        uniform vec4 specularProduct;
+        uniform float shininess;
+        varying vec3 N, L, E;
+
+        void main()
+        {
+            
+            vec3 H = normalize( L + E );
+            vec4 ambient = ambientProduct;
+
+            float Kd = max( dot(L, N), 0.0 );
+            vec4  diffuse = Kd*diffuseProduct;
+
+            float Ks = pow( max(dot(N, H), 0.0), shininess );
+            vec4  specular = Ks * specularProduct;
+
+            if ( dot(L, N) < 0.0 ) {
+                specular = vec4(0.0, 0.0, 0.0, 1.0);
+            } 
+
+            uColor = ambient + diffuse + specular;
+            uColor.a = 1.0;
+
+            gl_FragColor = uColor;
+        }
+
+    </script>
+
+    <script id="texture-fragment-shader" type="x-shader/x-fragment">
+        precision mediump float;
+
+        uniform vec4 fColor;
+        varying vec2 fTexCoord;
+        
+        uniform sampler2D texture;
+        
+        void
+        main()
+        {
+            gl_FragColor = fColor * texture2D( texture, fTexCoord );
+        }
+
+    </script>
+
+    <script type="text/javascript" src="Common/webgl-utils.js"></script>
+    <script type="text/javascript" src="Common/initShaders.js"></script>
+    <script type="text/javascript" src="Common/MV.js"></script>
+    <script type="text/javascript" src="scene.js"></script>
+    <script type="text/javascript" src="utils.js"></script>
+    <script type="text/javascript" src="vertices.js"></script>
+</head>
+
+<body oncontextmenu="return false;">
+    <canvas id="gl-canvas" width="1300" height="1100">Please use a browser that supports Canvass</canvas>
+</body>
+
+</html>
