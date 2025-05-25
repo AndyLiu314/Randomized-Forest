@@ -15,8 +15,7 @@ Most branches/segments of each tree are coded to have a random rotation and loca
 and feeling forest which can be used for future game projects that I may want to develop. The code for the actual creation of the 
 tree objects takes inspiration from the robot arm demo given in the textbook coding examples by Angel. I used functions for each 
 segment of the tree to be drawn out and then called each of them in the drawRobot() function to create a random tree. I had many ideas 
-for this project but unfortunately ran out of time and wasn't able to fully realize this project. With time, I want to add shadows,
-textures, and bump mapping to this project to give it a greater sense of realism. 
+for this project but unfortunately ran out of time and wasn't able to fully realize this project.
 
 **Acknowledgements:**
 To create this project, I used helper functions from the textbook coding examples. For example, the cylinder function I took and 
